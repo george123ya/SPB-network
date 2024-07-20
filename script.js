@@ -317,7 +317,7 @@ d3.json('./networkx_data.json').then(data => {
         authorCard.select(".flagPhoto").attr("src", flagUrl(author.country));
         authorCard.select(".authorCountry").text(author.country);
         authorCard.select(".authorORCID").text(author.orcid);
-        authorCard.select(".authorh5").text(author.hindex5y);
+        authorCard.select(".authorh").text(author.hindex);
         // add photo
         console.log(author.photo);
         authorCard.select(".authorPhoto").attr("src", author.photo);
