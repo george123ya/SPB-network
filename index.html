@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- icon -->
+    <link rel="icon" href="https://scontent.flim15-1.fna.fbcdn.net/v/t1.6435-9/167733528_133901418739618_7233742468266903680_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFTV-vMvTY9_OrchpstirWDKuncwP7t7IUq6dzA_u3shRVNbgm-tH5JAggg6yXVJgZNpLdnaa0kUPh1gX7WPCsx&_nc_ohc=AY61jX0QTsUQ7kNvgFlsAV4&_nc_ht=scontent.flim15-1.fna&oh=00_AYBUAMb28efXVSSUWydwEbAX5NaHr5cQCjMM32NWBRwKmQ&oe=66C2621B" type="image/x-icon">
+    <title>SPB Author Network</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        body {
+            /* background color dark gradient */
+            background: radial-gradient(circle at 24.1% 68.8%, rgb(50, 50, 50) 0%, rgb(0, 0, 0) 99.4%);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .node {
+            stroke: #fff;
+            stroke-width: 1.5px;
+            fill: #fff;
+        }
+        .author-node {
+            /* stroke gradient light */
+            fill: rgb(99, 0, 212);
+            stroke-width: 5px;
+            paint-order: stroke fill;
+        }
+        .label {
+            fill: #fff;
+        }
+        .link {
+            stroke: #848484;
+            stroke-opacity: 0.6;
+        }
+        .highlight {
+            stroke: #f00;
+            stroke-width: 10px;
+        }
+        .highlight-node {
+            fill: #f00;
+        }
+        .header {
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .header-inner {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .header span {
+            width: 50%;
+            font-size: 2em;
+            font-weight: bold;
+        }
+        #mainNetwork {
+            margin: 30px;
+            /* background-color: #000; */
+        }
+        .SPBPhoto {
+            border-radius: 50% 50% 50% 50%;
+            border-collapse: collapse;
+            max-width: 1080px;
+            height: 100px;
+            object-fit: contain;
+        }
+        .containerPhoto {
+            left: 55%;
+            top: 12%;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* margin-top: -100px; */
+        }
+        .authorInfo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 800px;
+            /* height: 800px; */
+            padding: 10px;
+            /* background-color: #000; */
+            overflow-y: visible;
+        }
+
+        .box-p {
+            /* margin: 0 auto; */
+            position: relative;
+            border-radius: 20px;
+            /* rainbow */
+            background: linear-gradient(0deg, #000, #262626);
+            
+        }
+
+        .national .box-p::before,
+        .national .box-p::after {
+            content: '';
+            border-radius: 20px;
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            background: linear-gradient(60deg, rgba(255,255,255,1) 0%, rgba(245,0,0,1) 13%, rgba(0,0,0,1) 50%, rgba(255,0,0,1) 80%, rgba(255,255,255,1) 100%);
+            background-size: 400%;
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            z-index: -1;
+            animation: animate 20s linear infinite;
+        }
+        
+        .international .box-p::before,
+        .international .box-p::after {
+            content: '';
+            border-radius: 20px;
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            background: linear-gradient(
+            90deg,
+            rgba(255, 0, 0, 1) 0%,
+            rgba(255, 154, 0, 1) 10%,
+            rgba(208, 222, 33, 1) 20%,
+            rgba(79, 220, 74, 1) 30%,
+            rgba(63, 218, 216, 1) 40%,
+            rgba(47, 201, 226, 1) 50%,
+            rgba(28, 127, 238, 1) 60%,
+            rgba(95, 21, 242, 1) 70%,
+            rgba(186, 12, 248, 1) 80%,
+            rgba(251, 7, 217, 1) 90%,
+            rgba(255, 0, 0, 1) 100%
+            );
+            background-size: 400%;
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            z-index: -1;
+            animation: animate 20s linear infinite;
+        }
+        
+        .box-p::after {
+            filter: blur(15px);
+        }
+
+        
+        @keyframes animate {
+            0% {
+                background-position: 0 0;
+
+            }
+            50% {
+                background-position: 400% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+
+        .authorInfo p {
+            /* z-index: 0; */
+            font-size: 1.5em;
+            font-weight: bold;
+            /* center text */
+            text-align: center;
+            margin: 0.5em;
+
+        }
+
+
+        .photo {
+            cursor: pointer;
+            /* border-radius: 50% 50% 50% 50%; */
+            /* margin: 50px; */
+            width: 5em;
+            height: 5em;
+            object-fit: cover;
+        }
+        .photo.highlight {
+            margin: -10px;
+            /* radial gradiente red black */
+            box-shadow: rgba(240, 46, 46, 0.4) 5px 5px, rgba(240, 46, 46, 0.3) 10px 10px, rgba(240, 46, 46, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;
+        }
+            
+        .authorPhotos {
+            /* height: auto; */
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            overflow-y: hidden;
+            padding-top: 20px;
+            /* padding-bottom: 100px; */
+            /* height: auto; */
+        }
+        .container {
+            margin: 10px;
+            width: 5em;
+            height: 5em;
+            /* background: #ffffff; */
+        }
+
+        .box {
+            border-radius: 50%;
+            position: relative;
+            height: 5em;
+            width: 5em;
+            margin: 0 auto;
+            background-color: #8c0000;
+            flex: 1;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .box:hover {
+            box-shadow: rgba(240, 46, 170, 0.4) 5px 5px, rgba(240, 46, 170, 0.3) 10px 10px, rgba(240, 46, 170, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;
+        }
+
+        /* .box-selected {
+            border-radius: 10%;
+            z-index: 100;
+            flex: 1 100px;
+            height: 10em;
+            margin-top: 0 auto;
+            transition: all 0.5s ease-in-out;
+        } */
+
+        .box:hover .Inside {
+            display: block;
+        }
+
+        .Inside {
+            position: relative;
+        }
+
+        .container .box .Inside .wrapper img {
+            border-radius: 50%;
+            display: block;
+            height: 5em;
+            width: 5em;
+            margin: 0 auto;
+        }
+
+        .card {
+            /* z-index: 100; */
+            display: block;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            /* center */
+            top: 80%;
+            left: -50%;
+            width: 25%;
+            height: 25%;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 20px;
+            transition: all 0.5s ease-in-out;
+            border-radius: 20px;
+        }
+        
+        .card-visible {
+            left: 15%;
+            display: block;
+            /* background: rgba(255, 255, 255, 0.862);
+            color: #000; */
+        }
+        
+        /* body:has(.box:hover) .card {
+            display: block;
+            background: #fff;
+            left: 15%;
+            color: #000;
+        } */
+
+        .card-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .authorData {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 58%;
+            height: 90%;
+            left: 200px;
+            top: 20px;
+            /* background-color: aqua; */
+            text-align: center;
+        }
+
+        .authorName {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: rgb(255, 255, 255);
+            margin-bottom: 20px;
+        }
+
+        .scholarLink {
+            text-decoration: none;
+        }
+
+        .authorAffiliation {
+            font-size: 1em;
+        }
+
+        .authorPhoto {
+            /* to the right rectangular with right radius border*/
+            position: absolute;
+            border-radius: 50%;
+            object-fit: cover;
+            width: 150px;
+            height: 150px;
+            left: 20px;
+            top: 20px;
+        }
+
+        .flagPhoto{
+            position: absolute;
+            left: 50px;
+            top: 200px;
+            width: 100px;
+            height: 70px;
+            object-fit: cover;   
+        }
+
+        .ORCIDtext {
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .authorORCID {
+            display: inline-block;
+        }
+
+        .h5text {
+            display: inline-block;
+            font-weight: bold;
+        }
+        .authorh5 {
+            display: inline-block;
+        }
+
+
+        
+    </style>
+</head>
+<body>
+    <!-- banner with pp of Sociedad Peruana de bioinformática y biología computacional -->
+     <!-- https://scontent.flim15-1.fna.fbcdn.net/v/t1.6435-9/167733528_133901418739618_7233742468266903680_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFTV-vMvTY9_OrchpstirWDKuncwP7t7IUq6dzA_u3shRVNbgm-tH5JAggg6yXVJgZNpLdnaa0kUPh1gX7WPCsx&_nc_ohc=AY61jX0QTsUQ7kNvgFlsAV4&_nc_ht=scontent.flim15-1.fna&oh=00_AYBUAMb28efXVSSUWydwEbAX5NaHr5cQCjMM32NWBRwKmQ&oe=66C2621B -->
+     <header class="header">
+        <div class="header-inner">
+            <img class="SPBPhoto" src="https://scontent.flim15-1.fna.fbcdn.net/v/t1.6435-9/167733528_133901418739618_7233742468266903680_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFTV-vMvTY9_OrchpstirWDKuncwP7t7IUq6dzA_u3shRVNbgm-tH5JAggg6yXVJgZNpLdnaa0kUPh1gX7WPCsx&_nc_ohc=AY61jX0QTsUQ7kNvgFlsAV4&_nc_ht=scontent.flim15-1.fna&oh=00_AYBUAMb28efXVSSUWydwEbAX5NaHr5cQCjMM32NWBRwKmQ&oe=66C2621B" alt="Sociedad Peruana de bioinformática y biología computacional">
+            <span style="margin-left: 20px;">V CONGRESO INTERNACIONAL DE LA SOCIEDAD PERUANA DE BIOINFORMÁTICA Y BIOLOGÍA COMPUTACIONAL</span>
+        </div>
+    </header>
+    <div style="display: flex;">
+        <svg id="mainNetwork" width="2000" height="800"></svg>
+        <div class="containerPhoto">
+            <div class="authorInfo national">
+                <div class="box-p">
+                    <p style="font-size: 2em; font-weight: bold;">PONENTES NACIONALES</p>
+                </div>
+                <div class="authorPhotos"></div>
+            </div>
+            <div class="authorInfo international">
+                <div class="box-p">
+                    <p style="font-size: 2em; font-weight: bold;">PONENTES INTERNACIONALES</p>
+                </div>
+                <div class="authorPhotos"></div>
+            </div>  
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="authorPhotoWrap">
+                    <a class="scholarLink" target="_blank">
+                        <img class="authorPhoto">
+                </div>
+                <div class="flag">
+                    <img class="flagPhoto">
+                </div>
+                <div class="authorData">
+                    <a class="scholarLink" target="_blank">
+                        <p class="authorName"></p>
+                    </a>
+                    <div class="authorAffiliation"></div>
+                    <div class="authorCountry"></div>
+                    <div class="authorh5Wrap">
+                        <p class="ORCIDtext">ORCID:&nbsp;</p><p class="authorORCID"></p>
+                    </div>
+                    <div class="authorh5Wrap">
+                        <p class="h5text">h5-index:&nbsp;</p><p class="authorh5"></p>
+                    </div>
+                    
+                </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
