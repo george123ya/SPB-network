@@ -72,12 +72,10 @@ d3.json('./networkx_data.json').then(data => {
     feMerge.append("feMergeNode")
         .attr("in","SourceGraphic");
 
-    // Apply the filter to the nodes
-    // mainSvg.selectAll(".node").style("filter", "url(#glow)");
-
     // Add text labels for interest areas
     console.log(nodes);
-    // Font size depende on the number of neighbors
+    
+    // Font size depends on the number of neighbors
 
     mainSvg.selectAll(".label")
         .data(interestAreas)
@@ -155,17 +153,6 @@ d3.json('./networkx_data.json').then(data => {
     // Card for the author
     const authorCard = d3.select(".card");
 
-    // Author photos section
-    // if author.country == "Peru", select #national, else #international
-
-    // if (author.country == "Peru") {
-    //     filtAuthor = authors.filter(d => d.country == "Peru");
-    //     showImages("#national", filtAuthor);
-    // } else {
-    //     filtAuthor = authors.filter(d => d.country != "Peru");
-    //     showImages("#international", filtAuthor);
-    // }
-
     showImages(".national .authorPhotos", authors.filter(d => d.country == "Peru"));
     showImages(".international .authorPhotos", authors.filter(d => d.country != "Peru"));
 
@@ -184,8 +171,6 @@ d3.json('./networkx_data.json').then(data => {
     function showImages(object, authors) {
 
         const photoContainer = d3.selectAll(object);
-    
-        // add div .container (div .wrapper (a (img) div .text) and div .content)
     
         photoContainer.selectAll("div")
             .data(authors)
@@ -250,35 +235,6 @@ d3.json('./networkx_data.json').then(data => {
 
         // .text(d => d.name);
 
-
-    // photoContainer.selectAll("img")
-    //     .data(authors)
-    //     .enter().append("img")
-    //     .attr("src", d => d.photo)
-    //     .attr("alt", d => d.name)
-    //     .attr("class", "photo")
-    //     .attr("title", d => d.name)
-    //     .on("mouseover", function(event, d) {
-    //         // Highlight the node in the main network
-    //         mainSvg.selectAll(".node").filter(node => node.id === d.id)
-    //             .classed("author-node", true)})
-    //     .on("mouseout", function(event, d) {
-    //         // Remove the highlight from the node in the main network
-    //         mainSvg.selectAll(".node").filter(node => node.id === d.id)
-    //             .classed("author-node", false)})
-    //     .on("click", function(event, d) {
-
-    //         if (d3.select(this).classed("highlight")) {
-    //             d3.selectAll(".photo").classed("highlight", false);
-    //             d3.selectAll(".node").classed("highlight-node", false);
-    //             d3.selectAll(".link").classed("highlight", false);
-    //         } else {
-    //             d3.selectAll(".photo").classed("highlight", false);
-    //             d3.select(this).classed("highlight", true);
-    //             highlightNeighbors(d.id);
-    //         }
-    //     })
-
     // Highlight neighbors
     function highlightNeighbors(nodeId) {
         // console.log("Highlighting neighbors of:", nodeId);
@@ -286,10 +242,6 @@ d3.json('./networkx_data.json').then(data => {
         // Reset previous highlights in the main network
         mainSvg.selectAll(".node").classed("highlight-node", false);
         mainSvg.selectAll(".link").classed("highlight", false);
-
-        // Highlight the clicked node in the main network
-        // mainSvg.selectAll(".node").filter(d => d.id === nodeId)
-        //     .classed("author-node", true);
 
         // Find and highlight neighbors in the main network
         const neighbors = links.filter(link => link.source.id === nodeId || link.target.id === nodeId);

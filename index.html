@@ -2,33 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- icon -->
     <link rel="icon" href="https://scontent.flim15-1.fna.fbcdn.net/v/t1.6435-9/167733528_133901418739618_7233742468266903680_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFTV-vMvTY9_OrchpstirWDKuncwP7t7IUq6dzA_u3shRVNbgm-tH5JAggg6yXVJgZNpLdnaa0kUPh1gX7WPCsx&_nc_ohc=AY61jX0QTsUQ7kNvgFlsAV4&_nc_ht=scontent.flim15-1.fna&oh=00_AYBUAMb28efXVSSUWydwEbAX5NaHr5cQCjMM32NWBRwKmQ&oe=66C2621B" type="image/x-icon">
     <title>SPB Author Network</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <style>
         body {
-            /* background color dark gradient */
             background: radial-gradient(circle at 24.1% 68.8%, #190750 0%, #37182f 99.4%);
             color: white;
             font-family: Arial, sans-serif;
         }
         .node {
-            /* stroke: #fff; */
             stroke-width: 1.5px;
             fill: #dfdfdf;
         }
         .author-node {
-            /* stroke gradient light */
             fill: rgb(99, 0, 212);
             stroke-width: 5px;
-            /* paint-order: stroke fill; */
         }
         .label {
             fill: #fff;
             text-shadow: 0 0 30px #000;
-            /* text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000,
-               1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000; */
         }
         .link {
             stroke: #848484;
@@ -42,19 +35,21 @@
             fill: #f00;
         }
         .header {
-            height: 100px;
+            /* height: 100px; */
             display: flex;
             justify-content: center;
             align-items: center;
         }
         .header-inner {
-            width: 100%;
+            /* margin-left: 6vw; */
+            width: 70em;
+            max-width: 90%;
             display: flex;
             justify-content: center;
             align-items: center;
         }
         .header span {
-            width: 50%;
+            /* width: auto; */
             font-size: 2em;
             font-weight: bold;
             text-align: center;
@@ -63,8 +58,6 @@
             margin: 30px;
             width: 55vw;
             height: 80vh;
-            /* box-shadow: 25px 25px 50px 0 white inset, -25px -25px 50px 0 white inset;  */
-            /* background-color: #000; */
         }
         .SPBPhoto {
             border-radius: 50% 50% 50% 50%;
@@ -81,27 +74,22 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            /* margin-top: -100px; */
         }
         .authorInfo {
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            width: 800px;
-            /* height: 800px; */
+            width: 43vw;
             padding: 10px;
-            /* background-color: #000; */
             overflow-y: visible;
         }
 
         .box-p {
-            /* margin: 0 auto; */
             position: relative;
             border-radius: 20px;
-            /* rainbow */
             background: linear-gradient(0deg, #000, #262626);
-            
+            font-size: 1.1em;
         }
 
         .national .box-p::before,
@@ -178,20 +166,16 @@
 
         .photo {
             cursor: pointer;
-            /* border-radius: 50% 50% 50% 50%; */
-            /* margin: 50px; */
             width: 4em;
             height: 4em;
             object-fit: cover;
         }
         .photo.highlight {
             margin: -10px;
-            /* radial gradiente red black */
             box-shadow: rgba(240, 46, 46, 0.4) 5px 5px, rgba(240, 46, 46, 0.3) 10px 10px, rgba(240, 46, 46, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;
         }
             
         .authorPhotos {
-            /* height: auto; */
             position: relative;
             display: flex;
             flex-wrap: wrap;
@@ -200,14 +184,11 @@
             padding: 10px;
             overflow-y: hidden;
             padding-top: 20px;
-            /* padding-bottom: 100px; */
-            /* height: auto; */
         }
         .container {
             margin: 10px;
             width: 4em;
             height: 4em;
-            /* background: #ffffff; */
         }
 
         .box {
@@ -224,15 +205,6 @@
         .box:hover {
             box-shadow: rgba(240, 46, 170, 0.4) 5px 5px, rgba(240, 46, 170, 0.3) 10px 10px, rgba(240, 46, 170, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;
         }
-
-        /* .box-selected {
-            border-radius: 10%;
-            z-index: 100;
-            flex: 1 100px;
-            height: 10em;
-            margin-top: 0 auto;
-            transition: all 0.5s ease-in-out;
-        } */
 
         .box:hover .Inside {
             display: block;
@@ -251,36 +223,27 @@
         }
 
         .card {
-            /* z-index: 100; */
             display: block;
             position: absolute;
             transform: translate(-50%, -50%);
-            /* center */
             top: 80%;
             left: -50%;
-            width: 25%;
+            min-width: 25em;
+            width: 29em;
             height: 25%;
+            min-height: 15em;
             background: rgba(0, 0, 0, 0.5);
             color: #fff;
-            padding: 20px;
+            padding: 1em;
             transition: all 0.5s ease-in-out;
-            border-radius: 20px;
+            border-radius: 2em;
         }
         
         .card-visible {
             left: 15%;
             display: block;
-            /* background: rgba(255, 255, 255, 0.862);
-            color: #000; */
         }
         
-        /* body:has(.box:hover) .card {
-            display: block;
-            background: #fff;
-            left: 15%;
-            color: #000;
-        } */
-
         .card-header {
             display: flex;
             justify-content: center;
@@ -296,9 +259,8 @@
             flex-direction: column;
             width: 58%;
             height: 100%;
-            left: 200px;
+            left: 12em;
             top: 0;
-            /* background-color: aqua; */
             text-align: center;
         }
 
@@ -318,12 +280,11 @@
         }
 
         .authorPhoto {
-            /* to the right rectangular with right radius border*/
             position: absolute;
             border-radius: 50%;
             object-fit: cover;
-            width: 150px;
-            height: 150px;
+            width: 10em;
+            height: 10em;
             left: 20px;
             top: 20px;
         }
@@ -332,8 +293,8 @@
             position: absolute;
             left: 50px;
             top: 200px;
-            width: 100px;
-            height: 70px;
+            width: 6.5em;
+            height: 4em;
             object-fit: cover;   
         }
 
@@ -359,8 +320,6 @@
     </style>
 </head>
 <body>
-    <!-- banner with pp of Sociedad Peruana de bioinformática y biología computacional -->
-     <!-- https://scontent.flim15-1.fna.fbcdn.net/v/t1.6435-9/167733528_133901418739618_7233742468266903680_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFTV-vMvTY9_OrchpstirWDKuncwP7t7IUq6dzA_u3shRVNbgm-tH5JAggg6yXVJgZNpLdnaa0kUPh1gX7WPCsx&_nc_ohc=AY61jX0QTsUQ7kNvgFlsAV4&_nc_ht=scontent.flim15-1.fna&oh=00_AYBUAMb28efXVSSUWydwEbAX5NaHr5cQCjMM32NWBRwKmQ&oe=66C2621B -->
      <header class="header">
         <div class="header-inner">
             <img class="SPBPhoto" src="https://scontent.flim15-1.fna.fbcdn.net/v/t1.6435-9/167733528_133901418739618_7233742468266903680_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFTV-vMvTY9_OrchpstirWDKuncwP7t7IUq6dzA_u3shRVNbgm-tH5JAggg6yXVJgZNpLdnaa0kUPh1gX7WPCsx&_nc_ohc=AY61jX0QTsUQ7kNvgFlsAV4&_nc_ht=scontent.flim15-1.fna&oh=00_AYBUAMb28efXVSSUWydwEbAX5NaHr5cQCjMM32NWBRwKmQ&oe=66C2621B" alt="Sociedad Peruana de bioinformática y biología computacional">
@@ -372,13 +331,13 @@
         <div class="containerPhoto">
             <div class="authorInfo national">
                 <div class="box-p">
-                    <p style="font-size: 2em; font-weight: bold;">PONENTES NACIONALES</p>
+                    <p style="font-weight: bold;">PONENTES NACIONALES</p>
                 </div>
                 <div class="authorPhotos"></div>
             </div>
             <div class="authorInfo international">
                 <div class="box-p">
-                    <p style="font-size: 2em; font-weight: bold;">PONENTES INTERNACIONALES</p>
+                    <p style="font-weight: bold;">PONENTES INTERNACIONALES</p>
                 </div>
                 <div class="authorPhotos"></div>
             </div>  
