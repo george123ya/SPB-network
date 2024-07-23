@@ -12,8 +12,9 @@ d3.json('./networkx_data.json').then(data => {
     const mainHeight = +d3.select("#mainNetwork").attr("height");
     
     // Define the initial zoom level
-    const initialScale = 0.5;  // Adjust the scale to start with less zoom
-    const initialTransform = d3.zoomIdentity.translate(mainWidth / 4 + 600, mainHeight / 4 + 400).scale(initialScale);
+    const initialScale = 0.8;  // Adjust the scale to start with less zoom
+    const initialTransform = d3.zoomIdentity.translate(mainWidth / 4 + 550, mainHeight / 4 + 400).scale(initialScale);
+
     
     // Define the zoom behavior
     const zoom = d3.zoom()
@@ -168,6 +169,18 @@ d3.json('./networkx_data.json').then(data => {
     showImages(".national .authorPhotos", authors.filter(d => d.country == "Peru"));
     showImages(".international .authorPhotos", authors.filter(d => d.country != "Peru"));
 
+    function zoomToNode(nodeId) {
+        console.log("Zooming to node:", nodeId);
+
+        // Find the node with the given id
+        const node = nodes.find(d => d.id === nodeId);
+        // If the node is found, zoom to it
+        if (node) {
+            const transform = d3.zoomIdentity.translate(mainWidth / 4 - node.x, mainHeight / 4 - node.y).scale(1);
+            mainSvgContainer.transition().duration(750).call(zoom.transform, transform);
+        }
+    }
+
     function showImages(object, authors) {
 
         const photoContainer = d3.selectAll(object);
@@ -189,6 +202,7 @@ d3.json('./networkx_data.json').then(data => {
                 if (d3.select(this).classed("box-selected")) {
                     d3.selectAll(".box").classed("box-selected", false);
                 } else {
+                    console.log("Clicked on:", d.id);
                     d3.selectAll(".box").classed("box-selected", false);
                     d3.select(this).classed("box-selected", true);
                 }
@@ -211,7 +225,7 @@ d3.json('./networkx_data.json').then(data => {
                     .classed("author-node", false)})
             .on("click", function(event, d) {
     
-                console.log(authorCard.classed("card-visible"));
+                // console.log(authorCard.classed("card-visible"));
     
                 if (d3.select(this).classed("highlight")) {
                     d3.selectAll(".photo").classed("highlight", false);
@@ -224,6 +238,8 @@ d3.json('./networkx_data.json').then(data => {
                     d3.select(this).classed("highlight", true);
                     highlightNeighbors(d.id);
                     showAuthorNameCard(d.id);
+                    // zoom to the node
+                    zoomToNode(d.id);
                 }
             })
             // add div .text 
@@ -265,7 +281,7 @@ d3.json('./networkx_data.json').then(data => {
 
     // Highlight neighbors
     function highlightNeighbors(nodeId) {
-        console.log("Highlighting neighbors of:", nodeId);
+        // console.log("Highlighting neighbors of:", nodeId);
 
         // Reset previous highlights in the main network
         mainSvg.selectAll(".node").classed("highlight-node", false);
@@ -303,7 +319,7 @@ d3.json('./networkx_data.json').then(data => {
     }
 
     function showAuthorNameCard(authorId) {
-        console.log("Showing author card for:", authorId);
+        // console.log("Showing author card for:", authorId);
         const author = authors.find(d => d.id === authorId);
         let scholarUrl = author.scholar_id;
         console.log(author);
