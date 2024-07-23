@@ -96,7 +96,7 @@ d3.json('./networkx_data.json').then(data => {
             // only if the node has > 1 neighbors return the font size
             // console.log(neighbors.length);
             if (neighbors.length > 1) {
-                return `${14 + 1.3**(neighbors.length)}px`;
+                return `${14 + 1.3*(neighbors.length)}px`;
             } else {
                 return "0px";
             }
