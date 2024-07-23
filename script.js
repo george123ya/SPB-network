@@ -339,16 +339,16 @@ d3.json('./networkx_data.json').then(data => {
         // authorCard.select(".authorCountry").text(author.country);
         console.log(author.orcid);
         if (author.orcid == undefined) {
-            authorCard.select(".ORCIDtext").text("");
-            authorCard.select(".authorORCID").text("");
+            // authorCard.select(".ORCIDtext").text("");
+            authorCard.select(".authorORCID").text("No ORCID");
         } else {
             authorCard.select(".ORCIDtext").text("ORCID:\xa0");
             authorCard.select(".authorORCID").text(author.orcid);
         }
         
         if (author.hindex == undefined) {
-            authorCard.select(".htext").text("");
-            authorCard.select(".authorh").text("");
+            // authorCard.select(".htext").text("");
+            authorCard.select(".authorh").text("No Google Scholar");
         } else {
             authorCard.select(".htext").text("h-index:\xa0");
             authorCard.select(".authorh").text(author.hindex);
