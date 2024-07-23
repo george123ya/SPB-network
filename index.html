@@ -29,23 +29,45 @@
         }
         h1 {
             position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            /* margin: auto; */
+            width: 100%;
+            top: 5%;
+            /* transform: translate(-50%, -50%); */
             color: #fff;
             font-family: "Source Sans Pro";
-            font-size: 5em;
+            font-size: 6em;
             font-weight: 900;
             -webkit-user-select: none;
             user-select: none;
+            text-align: center;
         }
         .name {
             color: #f00;
         }
+        .david {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            box-shadow: 0 0 10px #fff;
+        }
+        .cake {
+            position: absolute;
+            top: 80%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+        }
     </style>
     <body bgcolor="black">
-        <h1>Happy Birthday, David!  </h1>
-        <!-- <h1 class="name">David</h1> -->
+        <h1>Happy Birthday, David! 🎁🎂</h1>
+        <img class="david" src="./david_requena1.png" alt="David Requena">
+        <img class="cake" src="https://img1.picmix.com/output/stamp/normal/7/0/1/0/590107_077af.gif" alt="Cake">
         <canvas id="birthday"></canvas>
 
     <script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
