@@ -13,7 +13,7 @@ d3.json('./networkx_data.json').then(data => {
     
     // Define the initial zoom level
     const initialScale = 0.5;  // Adjust the scale to start with less zoom
-    const initialTransform = d3.zoomIdentity.translate(mainWidth / 4 - 400, mainHeight / 4).scale(initialScale);
+    const initialTransform = d3.zoomIdentity.translate(mainWidth / 4 + 600, mainHeight / 4 + 400).scale(initialScale);
     
     // Define the zoom behavior
     const zoom = d3.zoom()
@@ -295,7 +295,8 @@ d3.json('./networkx_data.json').then(data => {
             "Brasil": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/1024px-Flag_of_Brazil.svg.png",
             "Chile": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Flag_of_Chile.svg/1024px-Flag_of_Chile.svg.png",
             "España": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Flag_of_Spain.svg/1024px-Flag_of_Spain.svg.png",
-            "Portugal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/1024px-Flag_of_Portugal.svg.png"
+            "Portugal": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/1024px-Flag_of_Portugal.svg.png",
+            "Sweden": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Flag_of_Sweden.svg/1024px-Flag_of_Sweden.svg.png",
         }
 
         return countryFlags[country];
@@ -304,7 +305,7 @@ d3.json('./networkx_data.json').then(data => {
     function showAuthorNameCard(authorId) {
         console.log("Showing author card for:", authorId);
         const author = authors.find(d => d.id === authorId);
-        let scholarUrl = "https://scholar.google.com/citations?user=" + author.scholar_id;
+        let scholarUrl = author.scholar_id;
         console.log(author);
 
         const nameText = author.grade + " " + author.name;
@@ -316,8 +317,23 @@ d3.json('./networkx_data.json').then(data => {
         authorCard.select(".authorAffiliation").text(author.affiliation);
         authorCard.select(".flagPhoto").attr("src", flagUrl(author.country));
         authorCard.select(".authorCountry").text(author.country);
-        authorCard.select(".authorORCID").text(author.orcid);
-        authorCard.select(".authorh").text(author.hindex);
+        console.log(author.orcid);
+        if (author.orcid == undefined) {
+            authorCard.select(".ORCIDtext").text("");
+            authorCard.select(".authorORCID").text("");
+        } else {
+            authorCard.select(".ORCIDtext").text("ORCID:\xa0");
+            authorCard.select(".authorORCID").text(author.orcid);
+        }
+        
+        if (author.hindex == undefined) {
+            authorCard.select(".htext").text("");
+            authorCard.select(".authorh").text("");
+        } else {
+            authorCard.select(".htext").text("h-index:\xa0");
+            authorCard.select(".authorh").text(author.hindex);
+        }
+
         // add photo
         console.log(author.photo);
         authorCard.select(".authorPhoto").attr("src", author.photo);
