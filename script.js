@@ -176,7 +176,7 @@ d3.json('./networkx_data.json').then(data => {
         const node = nodes.find(d => d.id === nodeId);
         // If the node is found, zoom to it
         if (node) {
-            const transform = d3.zoomIdentity.translate(mainWidth / 4 - node.x, mainHeight / 4 - node.y).scale(1);
+            const transform = d3.zoomIdentity.translate(mainWidth / 2 - node.x + 250, mainHeight / 2 - node.y - 100).scale(1);
             mainSvgContainer.transition().duration(750).call(zoom.transform, transform);
         }
     }
@@ -288,8 +288,8 @@ d3.json('./networkx_data.json').then(data => {
         mainSvg.selectAll(".link").classed("highlight", false);
 
         // Highlight the clicked node in the main network
-        mainSvg.selectAll(".node").filter(d => d.id === nodeId)
-            .classed("highlight-node", true);
+        // mainSvg.selectAll(".node").filter(d => d.id === nodeId)
+        //     .classed("author-node", true);
 
         // Find and highlight neighbors in the main network
         const neighbors = links.filter(link => link.source.id === nodeId || link.target.id === nodeId);
@@ -300,6 +300,10 @@ d3.json('./networkx_data.json').then(data => {
             mainSvg.selectAll(".link").filter(d => d.source.id === link.source.id && d.target.id === link.target.id)
                 .classed("highlight", true);
         });
+
+        // set .author-node to the clicked node
+        mainSvg.selectAll(".node").filter(d => d.id === nodeId)
+            .classed("author-node", true);
     }
 
     function flagUrl(country) {
@@ -332,7 +336,7 @@ d3.json('./networkx_data.json').then(data => {
         // authorCard.select(".authorPhoto").attr("href", scholarUrl);
         authorCard.select(".authorAffiliation").text(author.affiliation);
         authorCard.select(".flagPhoto").attr("src", flagUrl(author.country));
-        authorCard.select(".authorCountry").text(author.country);
+        // authorCard.select(".authorCountry").text(author.country);
         console.log(author.orcid);
         if (author.orcid == undefined) {
             authorCard.select(".ORCIDtext").text("");
