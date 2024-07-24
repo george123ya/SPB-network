@@ -7,9 +7,12 @@ d3.json('./networkx_data.json').then(data => {
     // Separate authors and interest areas
     const authors = nodes.filter(d => d.photo);
     const interestAreas = nodes.filter(d => !d.photo);
+
+    let bodyHeight = d3.select("body").node().getBoundingClientRect().height;
+    let bodyWidth = d3.select("body").node().getBoundingClientRect().width;
     
-    const mainWidth = +d3.select("#mainNetwork").attr("width");
-    const mainHeight = +d3.select("#mainNetwork").attr("height");
+    let mainWidth = +d3.select("#mainNetwork").attr("width");
+    let mainHeight = +d3.select("#mainNetwork").attr("height");
     
     // Define the initial zoom level
     const initialScale = 0.8;  // Adjust the scale to start with less zoom
@@ -157,13 +160,41 @@ d3.json('./networkx_data.json').then(data => {
     showImages(".international .authorPhotos", authors.filter(d => d.country != "Peru"));
 
     function zoomToNode(nodeId) {
-        console.log("Zooming to node:", nodeId);
+
+        // console.log("Zooming to node:", nodeId);
 
         // Find the node with the given id
         const node = nodes.find(d => d.id === nodeId);
+
+        // Get the coordinates of authorCard to adjust the zoom
+
+        let cardX = authorCard.node().getBoundingClientRect().x;
+        let cardY = authorCard.node().getBoundingClientRect().y;
+
+        // if cardX is negative, then add 400
+
+        if (cardX < 0) {
+            cardX = 27;
+        }
+
+        let bodyHeight = d3.select("body").node().getBoundingClientRect().height;
+        let bodyWidth = d3.select("body").node().getBoundingClientRect().width;
+        
+        let mainWidth = d3.select("#mainNetwork").node().getBoundingClientRect().width;
+        let mainHeight = d3.select("#mainNetwork").node().getBoundingClientRect().height;
+        
+        // 548.77ln(x) - 3602.4
+
+        let correct = 548.77*Math.log(mainWidth) - 3602.4;
+
+        // console.log((1/(mainWidth))*200000);
+        // console.log(bodyWidth, bodyHeight);
+        console.log(mainWidth, mainHeight);
+        // console.log(cardX, cardY);
+
         // If the node is found, zoom to it
         if (node) {
-            const transform = d3.zoomIdentity.translate(mainWidth / 2 - node.x + 250, mainHeight / 2 - node.y - 100).scale(1);
+            const transform = d3.zoomIdentity.translate(- node.x + correct, - node.y - (1/mainHeight)*130000).scale(1);
             mainSvgContainer.transition().duration(750).call(zoom.transform, transform);
         }
     }
