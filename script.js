@@ -34,7 +34,7 @@ d3.json('./networkx_data.json').then(data => {
     .append("g")
     .attr("transform", initialTransform);  // Apply the initial transformation
     
-    const mainSvg = mainSvgContainer.append("g");
+    let mainSvg = mainSvgContainer.append("g");
     
     const mainSimulation = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(d => d.id).distance(100))
@@ -101,11 +101,11 @@ d3.json('./networkx_data.json').then(data => {
                 d3.selectAll(".author").classed("highlight", false);
                 d3.selectAll(".node").classed("highlight-node", false);
                 d3.selectAll(".link").classed("highlight", false);
-                d3.selectAll(".photo").classed("highlight", false);
+                // d3.selectAll(".photo").classed("highlight", false);
                 hightlightNodePhotos(d.id, false);
             } else {
                 d3.selectAll(".interest").classed("highlight", false);
-                d3.selectAll(".photo").classed("highlight", false);
+                // d3.selectAll(".photo").classed("highlight", false);
                 d3.select(this).classed("highlight", true);
                 hightlightNodePhotos(d.id, true);
                 highlightNeighbors(d.id);
@@ -184,7 +184,7 @@ d3.json('./networkx_data.json').then(data => {
         
         // show keywords with different colors
         const node = interestAreas.find(d => d.id === nodeId);
-        console.log(node);
+        // console.log(node);
 
         let title_text = node.id;
 
@@ -194,7 +194,7 @@ d3.json('./networkx_data.json').then(data => {
         if (title_text.length > 20) {
 
             let index = title_text.indexOf(" ", 20);
-            console.log(index);
+            // console.log(index);
             if (index == -1) {
                 title_text = title_text.substring(0, 20) + " " + title_text.substring(20);
             } else {
@@ -224,7 +224,7 @@ d3.json('./networkx_data.json').then(data => {
 
 
     // Add text labels for interest areas
-    console.log(nodes);
+    // console.log(nodes);
     
     // Font size depends on the number of neighbors
 
@@ -337,7 +337,7 @@ d3.json('./networkx_data.json').then(data => {
 
         // console.log((1/(mainWidth))*200000);
         // console.log(bodyWidth, bodyHeight);
-        console.log(mainWidth, mainHeight);
+        // console.log(mainWidth, mainHeight);
         // console.log(cardX, cardY);
 
         // If the node is found, zoom to it
@@ -375,7 +375,7 @@ d3.json('./networkx_data.json').then(data => {
                 if (d3.select(this).classed("box-selected")) {
                     d3.selectAll(".box").classed("box-selected", false);
                 } else {
-                    console.log("Clicked on:", d.id);
+                    // console.log("Clicked on:", d.id);
                     d3.selectAll(".box").classed("box-selected", false);
                     d3.select(this).classed("box-selected", true);
                 }
@@ -401,7 +401,6 @@ d3.json('./networkx_data.json').then(data => {
                 // console.log(authorCard.classed("card-visible"));
                 boxId = d3.select(this).node().parentNode.parentNode.parentNode.id;
                 if (d3.select(this).classed("photoHighlight")) {
-                    console.log("bbcita");
                     d3.selectAll(".photo").classed("photoHighlight", false);
                     d3.selectAll(".node").classed("highlight-node", false);
                     d3.selectAll(".link").classed("highlight", false);
@@ -456,6 +455,7 @@ d3.json('./networkx_data.json').then(data => {
         } else {
             d3.selectAll(".box").classed("photoHighlight", false);
             d3.selectAll(".box").classed("photoNoHighlight", false);
+            d3.selectAll(".photo").classed("photoHighlight", false);
         }
 
     
@@ -504,7 +504,7 @@ d3.json('./networkx_data.json').then(data => {
         // console.log("Showing author card for:", authorId);
         const author = authors.find(d => d.id === authorId);
         let scholarUrl = author.scholar_id;
-        console.log(author);
+        // console.log(author);
 
         const nameText = author.grade + " " + author.name;
 
@@ -515,7 +515,7 @@ d3.json('./networkx_data.json').then(data => {
         authorCard.select(".authorAffiliation").text(author.affiliation);
         authorCard.select(".flagPhoto").attr("src", flagUrl(author.country));
         // authorCard.select(".authorCountry").text(author.country);
-        console.log(author.orcid);
+        // console.log(author.orcid);
         if (author.orcid == undefined) {
             // authorCard.select(".ORCIDtext").text("");
             authorCard.select(".authorORCID").text("No ORCID");
@@ -533,7 +533,7 @@ d3.json('./networkx_data.json').then(data => {
         }
 
         // add photo
-        console.log(author.photo);
+        // console.log(author.photo);
         authorCard.select(".authorPhoto").attr("src", author.photo);
         
         // set card class to .card-visible
@@ -591,7 +591,7 @@ d3.json('./networkx_data.json').then(data => {
         span.innerText = e.target.innerText;
         let articles1 = [];
         if (e.target.innerText == "Everything") {
-            console.log("Everything");
+            // console.log("Everything");
             input.placeholder = "Search anything...";
             articles1 = everything;
         } else {
@@ -685,9 +685,11 @@ d3.json('./networkx_data.json').then(data => {
                 suggestionItem.addEventListener('click', function() {
                     input.value = article.name;
                     if (article.id) {
+                        
+                        // mainSvg = d3.select("#mainNetwork").select("g");
                         zoomToNode(article.id);
                         // showAuthorNameCard(article.id);
-                        // hightlightNodePhotos(article.id, true);
+                        hightlightNodePhotos(article.id, true);
                         highlightNeighbors(article.id);
                     }
                     empty(container)
