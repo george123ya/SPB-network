@@ -15,8 +15,8 @@ d3.json('./networkx_data.json').then(data => {
     let mainHeight = +d3.select("#mainNetwork").attr("height");
     
     // Define the initial zoom level
-    const initialScale = 0.8;  // Adjust the scale to start with less zoom
-    const initialTransform = d3.zoomIdentity.translate(mainWidth / 4 + 550, mainHeight / 4 + 400).scale(initialScale);
+    let initialScale = 0.8;  // Adjust the scale to start with less zoom
+    let initialTransform = d3.zoomIdentity.translate(mainWidth / 4 + 550, mainHeight / 4 + 400).scale(initialScale);
 
     
     // Define the zoom behavior
@@ -29,7 +29,7 @@ d3.json('./networkx_data.json').then(data => {
     }
     
     // Main network setup
-    const mainSvgContainer = d3.select("#mainNetwork")
+    let mainSvgContainer = d3.select("#mainNetwork")
     .call(zoom)
     .append("g")
     .attr("transform", initialTransform);  // Apply the initial transformation
@@ -48,6 +48,15 @@ d3.json('./networkx_data.json').then(data => {
     .enter().append("line")
     .attr("class", "link");
     
+    // it says undefined reading format
+    // var formatTime = d3.time.format("%e %B %Y");
+
+    // var formatTime = d3.time.format("%e %B
+
+    var div = d3.select("body").append("div")   
+    .attr("class", "tooltip")               
+    .style("opacity", 0);
+
     const mainNode = mainSvg.append("g")
     .attr("class", "nodes")
     .selectAll("circle")
@@ -60,20 +69,159 @@ d3.json('./networkx_data.json').then(data => {
     .on("drag", dragged)
     .on("end", dragended));
 
-    //Container for the gradients
-    var defs = mainSvg.append("defs");
+    // show keywords from interest areas when node is clicked
+    // it show a box of the class .keyword-node
 
-    //Filter for the outside glow
-    var filter = defs.append("filter")
-        .attr("id","glow");
-    filter.append("feGaussianBlur")
-        .attr("stdDeviation","3.5")
-        .attr("result","coloredBlur");
-    var feMerge = filter.append("feMerge");
-    feMerge.append("feMergeNode")
-        .attr("in","coloredBlur");
-    feMerge.append("feMergeNode")
-        .attr("in","SourceGraphic");
+    // var div = d3.select("body").append("div")   
+    //     .attr("class", "tooltip")               
+    //     .style("opacity", 0);
+
+    // mainSvg.selectAll(".interest")
+    // .on("mouseover", (event, d) => {
+    //     div.transition()
+    //         .duration(200)
+    //         .style("opacity", .9);
+    //     div .html(showKeywords(d.id))
+    //         .style("left", (event.pageX + 20) + "px")
+    //         .style("top", (event.pageY - 20) + "px");
+    //     })
+    // .on("mouseout", function(d) {       
+    //     div.transition()        
+    //         .duration(500)      
+    //         .style("opacity", 0);   
+    // });
+
+
+    // if interest area node is clicked, highlight the authors photos and the authors in the network
+
+    mainSvg.selectAll(".interest")
+        .on("click", function(event, d) {
+            if (d3.select(this).classed("highlight")) {
+                d3.selectAll(".interest").classed("highlight", false);
+                d3.selectAll(".author").classed("highlight", false);
+                d3.selectAll(".node").classed("highlight-node", false);
+                d3.selectAll(".link").classed("highlight", false);
+                d3.selectAll(".photo").classed("highlight", false);
+                hightlightNodePhotos(d.id, false);
+            } else {
+                d3.selectAll(".interest").classed("highlight", false);
+                d3.selectAll(".photo").classed("highlight", false);
+                d3.select(this).classed("highlight", true);
+                hightlightNodePhotos(d.id, true);
+                highlightNeighbors(d.id);
+            }
+        })
+        .on("mouseover", function(event, d) {
+            mainSvg.selectAll(".node").filter(node => node.id === d.id)
+                .classed("author-node", true);
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+            div .html(showKeywords(d.id))
+                .style("left", (event.pageX + 20) + "px")
+                .style("top", (event.pageY - 20) + "px");
+        })
+        .on("mouseout", function(event, d) {
+            mainSvg.selectAll(".node").filter(node => node.id === d.id)
+                .classed("author-node", false);
+            div.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
+
+    // if author node is clicked, highlight the authors photos and the authors in the network
+
+    mainSvg.selectAll(".author")
+        .on("click", function(event, d) {
+            if (d3.select(this).classed("highlight")) {
+                d3.selectAll(".author").classed("highlight", false);
+                d3.selectAll(".interest").classed("highlight", false);
+                d3.selectAll(".node").classed("highlight-node", false);
+                d3.selectAll(".link").classed("highlight", false);
+                hightlightNodePhotos(d.id, false);
+            } else {
+                d3.selectAll(".author").classed("highlight", false);
+                d3.select(this).classed("highlight", true);
+                hightlightNodePhotos(d.id, true);
+                highlightNeighbors(d.id);
+            }
+        })
+        .on("mouseover", function(event, d) {
+            // Highlight the node in the main network
+            mainSvg.selectAll(".node").filter(node => node.id === d.id)
+                .classed("author-node", true);
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+            div .html(showAuthorTooltip(d.id))
+                .style("left", (event.pageX + 20) + "px")
+                .style("top", (event.pageY - 20) + "px");
+        })
+        .on("mouseout", function(event, d) {
+            // Remove the highlight from the node in the main network
+            mainSvg.selectAll(".node").filter(node => node.id === d.id)
+                .classed("author-node", false);
+            div.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
+        
+
+    function showAuthorTooltip(nodeId) {
+        const node = authors.find(d => d.id === nodeId);
+        let title = "<span class='area'>" + node.name + "</span>";
+        
+        return title;
+    }
+
+    function getRandomColor() {
+        color = "hsl(" + Math.random() * 360 + ", 100%, 30%)";
+        return color;
+      }
+
+
+    function showKeywords(nodeId) {
+        
+        // show keywords with different colors
+        const node = interestAreas.find(d => d.id === nodeId);
+        console.log(node);
+
+        let title_text = node.id;
+
+        // add line break to the title word if it is too long
+        // find spaces to separate the words
+
+        if (title_text.length > 20) {
+
+            let index = title_text.indexOf(" ", 20);
+            console.log(index);
+            if (index == -1) {
+                title_text = title_text.substring(0, 20) + " " + title_text.substring(20);
+            } else {
+                title_text = title_text.substring(0, index) + " " + title_text.substring(index);
+            }
+            
+        }
+        
+        let title = "<span class='area'>" + node.id + "</span>" 
+        
+        let keywords = node.keywords;
+        
+        let keywordString = "";
+        
+        for (let keyword of keywords) {
+
+            if (keyword.length > 20) {
+                keyword = keyword.substring(0, 20) + "...";
+            }
+
+            keywordString += "<span class='keyword' style='background-color:" + getRandomColor() + "'>" + keyword + "</span>";
+        }
+        
+
+        return title + keywordString;
+    }
+
 
     // Add text labels for interest areas
     console.log(nodes);
@@ -110,8 +258,8 @@ d3.json('./networkx_data.json').then(data => {
 
     // console.log("Nodes:", nodes);
 
-    mainNode.append("title")
-        .text(d => d.id);
+    // mainNode.append("title")
+    //     .text(d => d.id);
 
     mainSimulation
         .nodes(nodes)
@@ -194,9 +342,17 @@ d3.json('./networkx_data.json').then(data => {
 
         // If the node is found, zoom to it
         if (node) {
-            const transform = d3.zoomIdentity.translate(- node.x + correct, - node.y - (1/mainHeight)*130000).scale(1);
+            const transform = d3.zoomIdentity.translate(- node.x - correct, - node.y - (1/mainHeight)*130000).scale(1);
+
+            // mainSvgContainer = d3.select("#mainNetwork")
+            //     .call(zoom)
+            //     .append("g")
+            //     .attr("transform", initialTransform);
             mainSvgContainer.transition().duration(750).call(zoom.transform, transform);
         }
+
+        // change zoom identity 
+        
     }
 
     function showImages(object, authors) {
@@ -209,6 +365,7 @@ d3.json('./networkx_data.json').then(data => {
             .attr("class", "container")
             .append("div")
             .attr("class", "box")
+            .attr("id", d => d.id)
             .append("div")
             .attr("class", "Inside")
             // select all .box of the object
@@ -242,16 +399,27 @@ d3.json('./networkx_data.json').then(data => {
             .on("click", function(event, d) {
     
                 // console.log(authorCard.classed("card-visible"));
-    
-                if (d3.select(this).classed("highlight")) {
-                    d3.selectAll(".photo").classed("highlight", false);
+                boxId = d3.select(this).node().parentNode.parentNode.parentNode.id;
+                if (d3.select(this).classed("photoHighlight")) {
+                    console.log("bbcita");
+                    d3.selectAll(".photo").classed("photoHighlight", false);
                     d3.selectAll(".node").classed("highlight-node", false);
                     d3.selectAll(".link").classed("highlight", false);
+                    d3.selectAll(".box").classed("photoNoHighlight", false);
+                    d3.selectAll(".author").classed("highlight", false);
                     authorCard.classed("card-visible", false);
     
                 } else {
-                    d3.selectAll(".photo").classed("highlight", false);
-                    d3.select(this).classed("highlight", true);
+                    d3.selectAll(".box").classed("photoNoHighlight", false);
+                    d3.selectAll(".photo").classed("photoHighlight", false);
+                    // console.log("Clicked on:", d.id);
+                    // 'this' is photo id, we want to select .box id which contains this photo
+                    d3.selectAll(".box").filter(box => box.id !== boxId)
+                        .classed("photoNoHighlight", true);
+                    d3.select(this).classed("photoHighlight", true);
+                    // d3.selectAll(".box")
+                    // .filter(d => !neighbors.find(link => link.source.id === d.id || link.target.id === d.id))
+                    // .classed("photoNoHighlight", true);
                     highlightNeighbors(d.id);
                     showAuthorNameCard(d.id);
                     // zoom to the node
@@ -264,7 +432,34 @@ d3.json('./networkx_data.json').then(data => {
             .attr("class", "text");
     }
 
-        // .text(d => d.name);
+    
+    function hightlightNodePhotos(nodeId, bool) {
+
+        if (bool) {
+            // reset all the classes first
+            d3.selectAll(".box").classed("photoHighlight", false);
+            d3.selectAll(".box").classed("photoNoHighlight", false);
+            // hide the author card
+            authorCard.classed("card-visible", false);
+
+            let neighbors = links.filter(link => link.source.id === nodeId || link.target.id === nodeId);
+    
+            // select all .container of the object with id node.id and add class .photoHighlight and
+            // the rest set .photoNoHighlight
+    
+            d3.selectAll(".box")
+                .filter(d => neighbors.find(link => link.source.id === d.id || link.target.id === d.id))
+                .classed("photoHighlight", true);
+            d3.selectAll(".box")
+                .filter(d => !neighbors.find(link => link.source.id === d.id || link.target.id === d.id))
+                .classed("photoNoHighlight", true);
+        } else {
+            d3.selectAll(".box").classed("photoHighlight", false);
+            d3.selectAll(".box").classed("photoNoHighlight", false);
+        }
+
+    
+    }
 
     // Highlight neighbors
     function highlightNeighbors(nodeId) {
@@ -285,8 +480,8 @@ d3.json('./networkx_data.json').then(data => {
         });
 
         // set .author-node to the clicked node
-        mainSvg.selectAll(".node").filter(d => d.id === nodeId)
-            .classed("author-node", true);
+        // mainSvg.selectAll(".node").filter(d => d.id === nodeId)
+        //     .classed("author-node", true);
     }
 
     function flagUrl(country) {
@@ -345,4 +540,163 @@ d3.json('./networkx_data.json').then(data => {
         authorCard.classed("card-visible", true);
 
     }
+
+
+    let dropdownBtnText = document.getElementById("drop-text");
+    let span = document.getElementById("span");
+    let icon = document.getElementById("icon");
+    let list = document.getElementById("list");
+    let input = document.getElementById("search-input");
+    let listItems = document.querySelectorAll(".dropdown-list-item");
+
+    dropdownBtnText.onclick = function () {
+    list.classList.toggle("show");
+    icon.style.rotate = "-180deg";
+    };
+
+    window.onclick = function (e) {
+    if (
+        e.target.id !== "drop-text" &&
+        e.target.id !== "icon" &&
+        e.target.id !== "span"
+    ) {
+        list.classList.remove("show");
+        icon.style.rotate = "0deg";
+    }
+    };
+
+    let keywords = []
+    let interestAreasList = []
+    let authorsList = []
+    // get all authors keywords and interest areas
+    // structure [{name: "keyword1"}, {name: "keyword2"}]
+    interestAreas.forEach(interest => {
+        interest.keywords.forEach(keyword => {
+            // id is the interest area it comes from
+            keywords.push({name: keyword, id: interest.id})
+        })
+    })
+    interestAreas.forEach(interest => {
+        interestAreasList.push({name: interest.id, id: interest.id})
+    })
+    authors.forEach(author => {
+        authorsList.push({name: author.name, id: author.id})
+    })
+    
+    let everything = keywords.concat(interestAreasList).concat(authorsList);
+    
+    let articles = everything;
+
+    function updateArticles(e) {
+        span.innerText = e.target.innerText;
+        let articles1 = [];
+        if (e.target.innerText == "Everything") {
+            console.log("Everything");
+            input.placeholder = "Search anything...";
+            articles1 = everything;
+        } else {
+            input.placeholder = "Search in " + e.target.innerText + "...";
+
+            if (e.target.innerText == "Author") {
+                articles1 = authorsList;
+            } else if (e.target.innerText == "Interest Area") {
+                articles1 = interestAreasList;
+            } else if (e.target.innerText == "Keyword") {
+                articles1 = keywords;
+            } else {
+                articles1 = everything;
+            }
+        }
+        
+        articles = articles1; // Update the outer articles array
+        
+        showSuggestions(input, articles1);
+
+    }
+
+    for (item of listItems) {
+        item.onclick = updateArticles;
+    }
+
+    showSuggestions(input, articles);
+
+    function showSuggestions(input, articles) {
+
+        // DOM element handles
+        const suggestions = document.getElementById('suggestions')
+        
+        // utils
+        const toLowerCase = (s) => s.toLowerCase()
+        const strIncludes = (s1) => (s2) => s1.includes(s2)
+        const filterByName = (val) => ({
+        name
+        }) => strIncludes(toLowerCase(name))(toLowerCase(val))
+        
+        // emptying a DOM element (#suggestions)
+        const empty = (element) => {
+        while (element.firstElementChild) {
+            element.firstElementChild.remove();
+        }
+        }
+        
+        // getting the items from the possible articles
+        const getFilteredArray = (arr) => (keyword) => keyword ? arr.filter(filterByName(keyword)) : []
+        const getFilteredArticles = getFilteredArray(articles)
+        
+        // input event handler
+        input.addEventListener('input', function(e) {
+        const filteredArticles = getFilteredArticles(e.target.value)
+        updateSuggestions(suggestions, this)(filteredArticles)
+        })
+        
+        // creating suggestion item DOM element
+        const getSuggestionItemEl = (suggestion) => {
+        const suggestionItem = document.createElement('div')
+        suggestionItem.classList.add('suggestion-item')
+        suggestionItem.textContent = suggestion.name
+        return {
+            suggestionItem,
+        }
+        }
+        
+        // base for handling click on suggestion items
+        const getListenerFn = (input, article, callback) => (e) => {
+        input.value = article.name
+        
+        if (callback && callback instanceof Function) {
+            // if a callback function is defined, then it's called with
+            // the following args
+            callback(input)
+        }
+        }
+        
+        // updating the suggestions list
+        const updateSuggestions = (container, input) => (filteredArticles) => {
+        // 1. emptying the container
+        empty(container)
+        
+        // 2. generating the DOM elements; adding click handler;
+        // adding generated elements to the container (#suggestions)
+
+            filteredArticles.forEach(function(article) {
+                const {
+                    suggestionItem
+                } = getSuggestionItemEl(article)
+                suggestionItem.addEventListener('click', function() {
+                    input.value = article.name;
+                    if (article.id) {
+                        zoomToNode(article.id);
+                        // showAuthorNameCard(article.id);
+                        // hightlightNodePhotos(article.id, true);
+                        highlightNeighbors(article.id);
+                    }
+                    empty(container)
+                })
+                container.append(suggestionItem)
+            })
+
+
+        }
+    }
+
 });

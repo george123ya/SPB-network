@@ -10,6 +10,7 @@
             background: radial-gradient(circle at 24.1% 68.8%, #190750 0%, #37182f 99.4%);
             color: white;
             font-family: Arial, sans-serif;
+            overflow-x: hidden;
         }
         .a_title {
             color: white;
@@ -42,6 +43,46 @@
         .highlight-node {
             fill: #f00;
         }
+        .keyword-node {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            /* border-radius: 50%; */
+            display: none;
+            background-color: #dfdfdf;
+        }
+        .keyword-visible {
+            display: block;
+        }
+        div.tooltip {   
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            text-align: center;     
+            align-items: center;
+            flex-direction: column;
+            /* width: auto; */
+            max-width: 200px;                  
+            height: auto;                 
+            padding: 8px;             
+            /* font: 1.2em sans-serif;         */
+            background: rgb(0, 0, 0);
+            color: white;   
+            border-radius: 8px;           
+            pointer-events: none;
+        }
+        .area {
+            font: size 1.2em;
+            font-weight: bold;
+        }
+        .keyword {
+            font-size: 0.8em;
+            font-weight: bold;
+            color: #ffffff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 3px;
+        }
         .header {
             /* height: 100px; */
             display: flex;
@@ -69,6 +110,7 @@
             margin: 10px;
             width: 55vw;
             height: 80vh;
+            margin-top: 2%;
         }
         .SPBPhoto {
             border-radius: 50% 50% 50% 50%;
@@ -85,6 +127,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            margin-top: 1%;
         }
         .authorInfo {
             display: flex;
@@ -201,6 +244,15 @@
             transition: all 0.5s ease-in-out;
         }
 
+        .photoHighlight {
+            /* aura */
+            box-shadow: 0px 0px 50px rgb(255, 255, 255);
+        }
+
+        .photoNoHighlight {
+            filter: grayscale(100%) brightness(50%);
+        }
+
         .box:hover {
             box-shadow: rgba(240, 46, 170, 0.4) 5px 5px, rgba(240, 46, 170, 0.3) 10px 10px, rgba(240, 46, 170, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;
         }
@@ -242,7 +294,7 @@
             position: absolute;
             /* transform: translate(-50%, -50%); */
             bottom: 5%;
-            left: -50%;
+            right: -50%;
             /* min-width: 25em; */
             width: 35vw;
             max-width: 27%;
@@ -256,7 +308,7 @@
         }
         
         .card-visible {
-            left: 5vh;
+            right: 5vh;
             /* display: block; */
         }
         
@@ -350,6 +402,140 @@
 
 
         
+        /* @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500&display=swap"); */
+        :root {
+        --blue: #9ab3f5;
+        --purple: #cf2287;
+        --white: #ffffff;
+
+        --shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+        }
+
+        .search-bar {
+        /* position: absolute; */
+        display: flex;
+        align-items: center;
+        width: 35em;
+        border-radius: 50px;
+        background-color: #000000a6;
+        backdrop-filter: blur(6px);
+        }
+
+        .dropdown {
+        position: relative;
+        width: 275px;
+        border-radius: 50px;
+        background-color: hsl(0deg 0% 0% / 0%);
+        border: 2px solid var(--white);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        }
+
+        .dropdown-text {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 1rem;
+        font-weight: 500;
+        background-color: transparent;
+        padding: 1rem 1.5rem;
+        color: var(--white);
+        }
+
+        .dropdown-list {
+        display: block;
+        position: absolute;
+        top: 3rem;
+        left: 0;
+        width: 75%;
+        border-radius: 15px;
+        max-height: 0;
+        overflow: hidden;
+        background-color: hsla(0, 0%, 0%, 0.452);
+        transition: max-height 0.5s;
+        /* backdrop-filter: blur(6px); */
+        }
+
+        .dropdown-list-item {
+        font-size: 0.9rem;
+        font-weight: 500;
+        border-radius: 15px;
+        padding: 1rem 0 1rem 0.5rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease, color 0.3s ease, margin-left 0.2s ease;
+        /* list-style-type: none; */
+        list-style: none;
+        /* padding: 0; */
+        margin: 0;
+        }
+
+        .dropdown-list-item:hover {
+        margin-left: 0.5rem;
+        color: var(--purple);
+        }
+
+        #list.show {
+        max-height: 300px;
+        }
+
+        .search-box {
+        display: flex;
+        align-items: center;
+        padding-right: 1rem;
+        width: 100%;
+        color: white;
+        }
+
+        .search-box input {
+        padding: 1rem;
+        width: 100%;
+        font-size: 1rem;
+        font-weight: 500;
+        color: rgb(255, 255, 255);
+        background-color: transparent;
+        border: 0;
+        outline: 0;
+        }
+
+        .search-box i {
+        font-size: 1.3rem;
+        cursor: pointer;
+        }
+
+        .search-box input::placeholder {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--purple);
+        }
+
+        #suggestions {
+            /* position: absolute; */
+            overflow-y: hidden;
+            max-height: 400px;
+            margin-left: 200px;
+            backdrop-filter: blur(6px);
+            border-radius: 15px;
+            padding: 10px;
+            font-weight: normal;
+        }
+
+        .suggestion-item {
+        cursor: pointer;
+        transition: all 0.4s;
+        }
+
+        .suggestion-item:hover {
+        background-color: rgba(0, 0, 0, 0.3);
+        transition: all 0.2s;
+        }
+        .barW {
+            position: absolute;
+            margin-top: 1.5%;
+            right: 10%;
+            display: inline-block;
+            font-weight: bold;
+        }
+        
     </style>
 </head>
 <body>
@@ -361,7 +547,36 @@
                 </a>
             </div>
     </header>
-    <div style="display: flex;">
+    <!-- Search Bar start -->
+    <div class="barW">
+        <div class="search-bar">
+            <!-- Dropdown start -->
+            <div class="dropdown">
+              <div id="drop-text" class="dropdown-text">
+                <span id="span">Everything</span>
+                <i id="icon" class="fa-solid fa-chevron-down"></i>
+              </div>
+              <ul id="list" class="dropdown-list">
+                <li class="dropdown-list-item">Everything</li>
+                <li class="dropdown-list-item">Author</li>
+                <li class="dropdown-list-item">Interest Area</li>
+                <li class="dropdown-list-item">Keyword</li>
+              </ul>
+            </div>
+            <!-- Dropdown ends -->
+      
+            <!-- Search box input start -->
+            <div class="search-box">
+              <input type="text" id="search-input" placeholder="Search anything..." />
+            </div>
+            <!-- Search box input ends -->
+        </div>
+          <!-- Search Bar ends -->
+        <div id="suggestions"></div>
+    </div>
+
+    <div style="display: flex; flex-direction: row-reverse;">
+        <div class="keyword-node"></div>
         <svg id="mainNetwork"></svg>
         <div class="containerPhoto">
             <div class="authorInfo national">
